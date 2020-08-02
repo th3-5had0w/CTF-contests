@@ -1,0 +1,48 @@
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  char flag[32]; // [esp+0h] [ebp-A0h]
+  char bio[64]; // [esp+20h] [ebp-80h]
+  char pass[16]; // [esp+60h] [ebp-40h]
+  char user[16]; // [esp+70h] [ebp-30h]
+  char name[16]; // [esp+80h] [ebp-20h]
+  FILE *f; // [esp+90h] [ebp-10h]
+  int match; // [esp+94h] [ebp-Ch]
+  int *v11; // [esp+98h] [ebp-8h]
+
+  v11 = &argc;
+  match = 0;
+  setup();
+  puts("Welcome to TJTinder, please register to start matching!");
+  printf("Name: ");
+  input(name, 1.0);
+  printf("Username: ");
+  input(user, 1.0);
+  printf("Password: ");
+  input(pass, 1.0);
+  printf("Tinder Bio: ");
+  input(bio, 8.0);
+  putchar(10);
+  if ( match == -1059860467 )
+  {
+    printf("Registered '%s' to TJTinder successfully!\n", user);
+    puts("Searching for matches...");
+    sleep(3u);
+    puts("It's a match!");
+    f = fopen("flag.txt", "r");
+    if ( !f )
+    {
+      puts("Flag File is Missing. Contact a moderator if running on server.");
+      exit(0);
+    }
+    fgets(flag, 32, f);
+    printf("Here is your flag: %s", flag);
+  }
+  else
+  {
+    printf("Registered '%s' to TJTinder successfully!\n", user);
+    puts("Searching for matches...");
+    sleep(3u);
+    puts("Sorry, no matches found. Try Again!");
+  }
+  return 0;
+}

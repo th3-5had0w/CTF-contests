@@ -1,0 +1,1 @@
+BKSEC{stack3_is_not_hard}

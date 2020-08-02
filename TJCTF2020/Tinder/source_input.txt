@@ -1,0 +1,23 @@
+int __cdecl input(char *str, float f)
+{
+  int result; // eax
+
+  fgets(str, (signed int)(f * 16.0), stdin);
+  if ( strlen(str) <= 1 )
+  {
+    puts("No input detected. Registration failed.");
+    exit(0);
+  }
+  if ( strchr(str, 10) )
+  {
+    result = (int)&str[strlen(str) - 1];
+    *(_BYTE *)result = 0;
+  }
+  else
+  {
+    do
+      result = fgetc(stdin);
+    while ( result != 10 );
+  }
+  return result;
+}
