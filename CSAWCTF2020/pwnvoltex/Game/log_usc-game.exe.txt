@@ -1,0 +1,15 @@
+[19:44:16][Info] Starting task "Application Setup"
+[19:44:16][Info] Version: 0.4.0
+[19:44:16][Info] Git commit: 2020-09-10_8445ddf3
+[19:44:16][Info] The locale was changed from C to English_United States.utf8
+[19:44:18][Warning] No joysticks found
+[19:44:20][Normal] Update check status code: 200
+[19:44:51][Error] In screen
+[19:44:58][Warning] No sorting set
+[19:44:58][Warning] No sorting set
+[19:44:58][Warning] No sorting set
+[19:44:58][Warning] No sorting set
+[19:45:04][Warning] FX audio for for beatmap does not exists at: "C:\Users\th3_5had0w\Desktop\CTF-contests\CSAWCTF2020\pwnvoltex\Game\songs\flagsong\" Using real-time effects instead.
+[19:45:08][Warning] Lua error: cannot open C:\Users\th3_5had0w\Desktop\CTF-contests\CSAWCTF2020\pwnvoltex\Game\skins\Default\backgrounds\arrow\fg.lua: No such file or directory
+[19:45:08][Warning] Failed to load foreground at path: "C:\Users\th3_5had0w\Desktop\CTF-contests\CSAWCTF2020\pwnvoltex\Game\skins/Default\backgrounds\arrow\" Attempting to load fallback instead.
+[19:45:08][Warning] Lua error: cannot open C:\Users\th3_5had0w\Desktop\CTF-contests\CSAWCTF2020\pwnvoltex\Game\skins\Default\backgrounds\fallback\fg.lua: No such file or directory

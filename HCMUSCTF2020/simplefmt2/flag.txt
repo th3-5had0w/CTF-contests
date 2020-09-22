@@ -1,0 +1,1 @@
+HCMUS-CTF{this_is_just_another_flag}
