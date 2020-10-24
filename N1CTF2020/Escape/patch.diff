@@ -1,0 +1,79 @@
+diff --git a/src/compiler/escape-analysis.cc b/src/compiler/escape-analysis.cc
+index 2a096b6933..3046d7b04e 100644
+--- a/src/compiler/escape-analysis.cc
++++ b/src/compiler/escape-analysis.cc
+@@ -178,7 +178,7 @@ class EscapeAnalysisTracker : public ZoneObject {
+         : VariableTracker::Scope(&tracker->variable_states_, node, reduction),
+           tracker_(tracker),
+           reducer_(reducer) {}
+-    const VirtualObject* GetVirtualObject(Node* node) {
++    VirtualObject* GetVirtualObject(Node* node) {
+       VirtualObject* vobject = tracker_->virtual_objects_.Get(node);
+       if (vobject) vobject->AddDependency(current_node());
+       return vobject;
+@@ -576,10 +576,14 @@ void ReduceNode(const Operator* op, EscapeAnalysisTracker::Scope* current,
+     case IrOpcode::kStoreField: {
+       Node* object = current->ValueInput(0);
+       Node* value = current->ValueInput(1);
+-      const VirtualObject* vobject = current->GetVirtualObject(object);
++      VirtualObject* vobject = current->GetVirtualObject(object);
+       Variable var;
+       if (vobject && !vobject->HasEscaped() &&
+           vobject->FieldAt(OffsetOfFieldAccess(op)).To(&var)) {
++        // Attach cached map info to the virtual object.
++        if (OffsetOfFieldAccess(op) == HeapObject::kMapOffset) {
++          vobject->SetMap(value);
++        }
+         current->Set(var, value);
+         current->MarkForDeletion();
+       } else {
+@@ -747,6 +751,17 @@ void ReduceNode(const Operator* op, EscapeAnalysisTracker::Scope* current,
+           // yet.
+           break;
+         }
++      } else if (vobject) {
++        Node* cache_map = vobject->Map();
++        if (cache_map) {
++          Type const map_type = NodeProperties::GetType(cache_map);
++          if (map_type.IsHeapConstant() &&
++              params.maps().contains(
++                  map_type.AsHeapConstant()->Ref().AsMap().object())) {
++            current->MarkForDeletion();
++            break;
++          }
++        }
+       }
+       current->SetEscaped(checked);
+       break;
+@@ -804,6 +819,12 @@ void ReduceNode(const Operator* op, EscapeAnalysisTracker::Scope* current,
+       for (int i = 0; i < value_input_count; ++i) {
+         Node* input = current->ValueInput(i);
+         current->SetEscaped(input);
++
++        // Invalidate associated map cache for all value input nodes.
++        VirtualObject* vobject = current->GetVirtualObject(input);
++        if (vobject) {
++          vobject->SetMap(nullptr);
++        }
+       }
+       if (OperatorProperties::HasContextInput(op)) {
+         current->SetEscaped(current->ContextInput());
+diff --git a/src/compiler/escape-analysis.h b/src/compiler/escape-analysis.h
+index 0fbc7d0bdd..ec56488388 100644
+--- a/src/compiler/escape-analysis.h
++++ b/src/compiler/escape-analysis.h
+@@ -147,11 +147,14 @@ class VirtualObject : public Dependable {
+   bool HasEscaped() const { return escaped_; }
+   const_iterator begin() const { return fields_.begin(); }
+   const_iterator end() const { return fields_.end(); }
++  Node* Map() const { return map_; }
++  void SetMap(Node* map) { map_ = map; }
+ 
+  private:
+   bool escaped_ = false;
+   Id id_;
+   ZoneVector<Variable> fields_;
++  Node* map_;
+ };
+ 
+ class EscapeAnalysisResult {
