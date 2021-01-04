@@ -1,0 +1,4 @@
+handleCreate:	0x555555556634
+handleRead:	0x5555555567a3
+handleWrite:	0x5555555569d2
+handleErase:	0x555555556c77
