@@ -1,0 +1,6 @@
+struct product{
+	char* product_name,  		//<-- &product+0
+	int   product_price, 		//<-- &product+4
+	char* &fd_pointer_in_list,	//<-- &product+8
+	char* &bk_place_in_list 	//<-- &product+12
+}

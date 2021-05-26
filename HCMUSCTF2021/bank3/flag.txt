@@ -1,0 +1,1 @@
+HCMUS-CTF{overwrite_all_the_things}
