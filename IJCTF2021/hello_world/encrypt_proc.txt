@@ -1,0 +1,2 @@
+before_ encryption: dau_b
+after_encryption: \xA3.\xACb\xA1

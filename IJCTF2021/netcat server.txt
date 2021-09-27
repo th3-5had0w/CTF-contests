@@ -1,0 +1,13 @@
+baby-sum: nc 35.244.10.136 10252
+ezpez_return : nc 35.244.10.136 10251
+memory-heist: nc 35.244.10.136 10253
+casino heist: nc 34.126.147.93 2200
+
+description:
+
+memory-heist: Hereee! You got both printf() and UAF. Lets see if you can get the flag :)
+casino heist: Professor has assembled a team to plan a Heist on the BigBrother Casino. Our team has already extracted the Binary that runs in the backend of their most popular Slot Machine. Professor believes this Slot Machine has bankrupted a ton of gamblers in the casino and have emassed a ton of cash.
+
+You are Rio. Develop an exploit to get the secret flag from the server; which will be used by us to transact the money to our offshore account.
+
+baby-sum: Simple calc here. Pliz don't overflow me :(

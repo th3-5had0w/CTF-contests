@@ -1,0 +1,3 @@
+DEBUG::starting up
+
+DEBUG::Enabling timer

