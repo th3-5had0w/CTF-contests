@@ -1,9 +1,9 @@
 from pwn import *
 
 
-io = process('./secretgarden')
-libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')
-#, env={"LD_PRELOAD":"./libc_64.so.6"})
+#io = process('./secretgarden')
+#libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')
+# env={"LD_PRELOAD":"./libc_64.so.6"})
 #io = remote('chall.pwnable.tw', 10203)
 #libc = ELF('./libc_64.so.6')
 

