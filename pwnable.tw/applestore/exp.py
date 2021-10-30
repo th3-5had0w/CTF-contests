@@ -51,6 +51,7 @@ for j in range(16):
 	add(5)
 
 
+pause()
 checkout()
 
 
