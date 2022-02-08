@@ -1,0 +1,13 @@
+version: '3.6'
+services:
+  caas:
+    build: .
+    ports:
+      - 8080:80
+    volumes:
+      - ./run.sh:/run.sh
+      - ./caas.py:/var/www/cgi-bin/caas.cgi
+      - ./evil:/var/www/cgi-bin/evil.cgi
+      - ./lighttpd.conf:/etc/lighttpd/lighttpd.conf
+      - ./nginx-site.conf:/etc/nginx/sites-available/default
+      - ./users:/users
