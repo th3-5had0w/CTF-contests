@@ -1,0 +1,8 @@
+version: "3"
+services:
+  bacteria:
+    build: .
+    ports:
+      - "9487:9487"
+    expose:
+      - "9487"

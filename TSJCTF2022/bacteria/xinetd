@@ -1,0 +1,11 @@
+service bacteria
+{
+    disable = no
+    type = UNLISTED
+    socket_type = stream
+    protocol = tcp
+    port = 9487
+    wait = no
+    user = bacteria
+    server = /home/bacteria/run.sh
+}
