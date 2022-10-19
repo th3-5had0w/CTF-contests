@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  pwn_srv:
+    build: .
+    container_name: "pwn_safe_pizza_orders"
+    restart: unless-stopped
+    ports:
+      - 3333:5000
+    environment:
+      - POW=0
+      - TIMEOUT_POW=9999
+      - TIMEOUT_CHALL=9999
