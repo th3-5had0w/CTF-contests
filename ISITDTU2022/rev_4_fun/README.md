@@ -1,0 +1,1 @@
+Sau khi dùng plugin CAPA explorer mình liền thấy có một hàm giống như base64 nhưng đã bị custom, có 3 chuỗi giống như base64 cần được decrypt, nhận thấy chuỗi thứ 3 là chuỗi đúng ra flag, follow up theo flow của hàm đó và ta có `ISITDTU{ez_decrypt_challenge!}`
