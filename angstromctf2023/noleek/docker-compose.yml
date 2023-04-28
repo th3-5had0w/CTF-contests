@@ -1,0 +1,7 @@
+version: '3.0'
+services:
+  noleek:
+    build: .
+    ports:
+      - 5000:5000
+    privileged: true
