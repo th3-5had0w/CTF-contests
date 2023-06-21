@@ -1,0 +1,1 @@
+FLAG{FILE_str34m_1s_pr1nt4bl3}
